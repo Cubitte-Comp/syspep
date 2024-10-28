@@ -1,13 +1,25 @@
 import { Camera, CloudUpload, Paperclip, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { PredictModal } from "../components/PredictModal";
 
 export const Detector = () => {
   const [mode, setMode] = useState("file"); // 'file' or 'camera'
   const [imageData, setImageData] = useState(null); // Almacena la imagen capturada o cargada
+
   const videoRef = useRef(null);
   const streamRef = useRef(null); // Ref para almacenar el stream de la cámara
   const fileInputRef = useRef(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleButtonClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    clearImage();
+    setIsModalOpen(false);
+  };
 
   // Encender la cámara cuando se selecciona el modo "camera"
   useEffect(() => {
@@ -28,6 +40,9 @@ export const Detector = () => {
     }
   }, [mode]);
 
+  const clearImage = () => {
+    setImageData(null);
+  }
   // Función para capturar la imagen desde la cámara
   const captureImage = () => {
     const canvas = document.createElement("canvas");
@@ -36,18 +51,15 @@ export const Detector = () => {
     canvas.height = videoRef.current.videoHeight;
     context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
     const image = canvas.toDataURL("image/png");
-    setImageData({ type: "camera", name: "captured-image.png", src: image });
+    setImageData({ type: "file", name: "captured-image.png", src: image });
   };
 
   // Manejar la carga de archivos
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+    // console.log(file)
     if (file) {
-      setImageData({
-        type: "file",
-        name: file.name,
-        src: URL.createObjectURL(file),
-      });
+      setImageData(file);
       toast.success("Imagen cargada exitosamente");
     }
   };
@@ -127,15 +139,15 @@ export const Detector = () => {
 
         {/* Sección oculta que se muestra al capturar/cargar una imagen */}
 
-        <div className="flex flex-col gap-2 p-5 justify-center items-center">
+        <div className="flex flex-col gap-2 p-2 justify-center items-center">
           {imageData ? (
-            <div class="mb-5 rounded-md bg-[#f8efea] py-4 px-8">
-              <div class="flex items-center justify-between">
-                <span class="truncate pr-3 text-base font-medium text-[#07074D]">
+            <div className="mb-5 rounded-md bg-[#f8efea] py-4 px-8">
+              <div className="flex items-center justify-between">
+                <span className="truncate pr-3 text-base font-medium text-[#07074D]">
                   {imageData.name}
                 </span>
-                <button class="text-[#07074D]">
-                  <X />
+                <button className="text-[#07074D]">
+                  <X onClick={clearImage} className="bg-slate-200 cursor-pointer"/>
                 </button>
               </div>
             </div>
@@ -149,9 +161,11 @@ export const Detector = () => {
                 ? "bg-green-600 hover:bg-green-500"
                 : "bg-gray-300 cursor-not-allowed"
             }`}
+            onClick={handleButtonClick}
           >
             Analizar
           </button>
+          
         </div>
         <div className="mt-5">
           <span className="text-gray-600">
@@ -159,6 +173,8 @@ export const Detector = () => {
             posibles infestaciones de plagas.
           </span>
         </div>
+        
+      {isModalOpen && <PredictModal onClose={handleCloseModal} image={imageData} />}
       </div>
     </>
   );

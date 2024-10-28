@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export const Registro = () => {
-
+    const navigate = useNavigate();
     const [email,setEmail]= useState("");
     const [password, setPassword] = useState("")
     const [name, setName] = useState("")
@@ -26,44 +27,47 @@ export const Registro = () => {
             return
         } 
         
-        toast.success("Tu cuenta ha sido creada exitosamente, pero antes de que puedas acceder al sistema, es necesario que un administrador apruebe tu solicitud. ",{
-            theme: "dark",
-        });
+        
 
-        // try {
-        //     // Realizar la solicitud a la API para obtener el token
-        //     const apiData = {
-        //         email: email,
-        //         password: password
-        //     };
-          
-        //     const response = await fetch('http://localhost:4000/login/auth', {
-        //         method: 'POST',
-        //         headers: {
-        //           'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(apiData),credentials: 'include', 
-        //       });
+        // navigate('/login');
+
+
+        try {
+            // Realizar la solicitud a la API para obtener el token
+            
+            const response = await fetch('http://localhost:3030/register', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({name, lastName, email, password}),
+              });
       
-        //     // Verificar si la respuesta es exitosa y contiene un token
-        //     if (response.ok) {
-        //         const data = await response.json();
-        //         document.cookie = `token=${data.token}; max-age=${60 * 60 * 24 * 7} path=/; samesite=strict`
-        //       // Redirigir a la página principal
-        //       navigate('/');
-        //       window.location.reload();
-        //     } else {
-        //       // Mostrar un mensaje de error si la respuesta no es la esperada
-        //       toast.error('Error al iniciar sesión. Verifica tus credenciales.', {
-        //         theme: 'dark',
-        //       });
-        //     }
-        //   } catch (error) {
-        //     console.error('Error al iniciar sesión:', error);
-        //     toast.error('Error al iniciar sesión. Inténtalo de nuevo más tarde.', {
-        //       theme: 'dark',
-        //     });
-        //   }
+            // Verificar si la respuesta es exitosa y contiene un token
+            if (response.ok) {
+                const data = await response.json();
+                if(data){
+                  toast.success("Tu cuenta ha sido creada exitosamente, pero antes de que puedas acceder al sistema, es necesario que un administrador apruebe tu solicitud. ",{
+                    theme: "dark",
+                  });
+
+                  // Redirigir a la página principal
+                  navigate('/');
+                }
+              
+
+            } else {
+              // Mostrar un mensaje de error si la respuesta no es la esperada
+              toast.error('Error al registrarse.  Inténtalo de nuevo más tarde.', {
+                theme: 'dark',
+              });
+            }
+          } catch (error) {
+            console.error('Error al iniciar sesión:', error);
+            toast.error(error , {
+              theme: 'dark',
+            });
+          }
     }
   return (
     <>
@@ -152,9 +156,9 @@ export const Registro = () => {
 
               <div className="flex gap-2 pt-5">
                 <p className="text-gray-600 text-sm">Ya tienes una cuenta?</p>
-                <a className="text-gray-600 text-sm underline" href="/register">
+                <Link className="text-gray-600 text-sm underline" to="/">
                   Inicia sesión aquí
-                </a>
+                </Link>
               </div>
             </form>
           </div>

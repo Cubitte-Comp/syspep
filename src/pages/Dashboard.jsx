@@ -5,21 +5,21 @@ import { LineGraph } from "../components/Line";
 
 
 const barChartData ={
-    labels: ['Top', 'Middle', 'Bottom'],
+    labels: ['Saludable', 'Roya Comun', 'Mancha Gris', 'Deterioro de la hoja'],
     datasets: [{
         label: 'plagas',
-        data: [65, 59, 80],
+        data: [65, 59, 80, 81],
         backgroundColor: 'rgb(248, 239, 234)',
         borderColor: 'rgba(163, 132, 85, 0.9)',
         borderWidth: 2
     }]
 };
 const lineChartData = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    labels: ["Junio", "Julio", "Agosto", "Septiebre", "Octubre", "Noviembre", "Diciembre"],
     datasets: [
       {
         label: "Meses",
-        data: [40, 42, 40, 55, 56, 65, 75],
+        data: [29, 32, 34, 44, 50, 52, 55],
          borderColor: 'rgb(163, 132, 84)'
 
       },
